@@ -7,7 +7,7 @@ class functions:
     def __init__(self, min_x, max_x, x_spacing):
         self.min_x = min_x
         self.max_x = max_x
-        self.x_spacing = 
+        self.x_spacing = x_spacing
 
     def wave_func(self, x_vals, y_vals):
         self.x_vals = x_vals
