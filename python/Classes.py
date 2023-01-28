@@ -67,15 +67,16 @@ a = 5
 b = 2
 calc = Calculator(a, b)
 answer = calc.test_add()
+print(answer)
 
 
-class Calculus:
-    def __init__(self, my_func):
-        x = Symbol('x')
-        self.function = my_func
-        print("Your function is {}.".format(self.function))
+# class Calculus:
+#     def __init__(self, my_func):
+#         x = Symbol('x')
+#         self.function = my_func
+#         print("Your function is {}.".format(self.function))
     
-    def int(self):
-        integral = integrate(self.function)
-        init_printing(use_unicode=False, wrap_line=False, no_global=True)
-        # print("{:.2f}".format(integral))
+#     def int(self):
+#         integral = integrate(self.function)
+#         init_printing(use_unicode=False, wrap_line=False, no_global=True)
+#         # print("{:.2f}".format(integral))
