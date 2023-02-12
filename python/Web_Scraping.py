@@ -5,7 +5,7 @@ import openpyxl
 excel = openpyxl.Workbook()
 sheet = excel.active
 sheet.title = 'IMDB Top Rated Movies'
-sheet.append(['Movie Rank', 'Movie Name', 'Release Year', 'IMDB Rating'])
+sheet.append(['Rank', 'Movie', 'Release Year', 'IMDB Rating'])
 
 try:
     source = requests.get('https://www.imdb.com/chart/top/')
