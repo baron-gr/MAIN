@@ -46,7 +46,7 @@ with mp_pose.Pose(min_detection_confidence = 0.9, min_tracking_confidence = 0.9)
             wrist_left = [landmarks[mp_pose.PoseLandmark.LEFT_WRIST.value].x, landmarks[mp_pose.PoseLandmark.LEFT_WRIST.value].y]
 
             angle_left = calculate_angle(shoulder_left, elbow_left, wrist_left)
-            cv2.putText(image, str(angle_left), tuple(np.multiply(elbow_left, [1920, 1080]).astype(int)), cv2.FONT_HERSHEY_SIMPLEX, 1.5, (255, 255, 255), 2, cv2.LINE_AA)
+            cv2.putText(image, str(angle_left), tuple(np.multiply(elbow_left, [1920, 1080]).astype(int)), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 255), 2, cv2.LINE_AA)
 
             if angle_left > 160:
                 position_left = "down"
@@ -64,7 +64,7 @@ with mp_pose.Pose(min_detection_confidence = 0.9, min_tracking_confidence = 0.9)
             wrist_right = [landmarks[mp_pose.PoseLandmark.RIGHT_WRIST.value].x, landmarks[mp_pose.PoseLandmark.RIGHT_WRIST.value].y]
 
             angle_right = calculate_angle(shoulder_right, elbow_right, wrist_right)
-            cv2.putText(image, str(angle_right), tuple(np.multiply(elbow_right, [1920, 1080]).astype(int)), cv2.FONT_HERSHEY_SIMPLEX, 1.5, (255, 255, 255), 2, cv2.LINE_AA)
+            cv2.putText(image, str(angle_right), tuple(np.multiply(elbow_right, [1920, 1080]).astype(int)), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 255), 2, cv2.LINE_AA)
 
             if angle_right > 160:
                 position_right = "down"
@@ -86,7 +86,7 @@ with mp_pose.Pose(min_detection_confidence = 0.9, min_tracking_confidence = 0.9)
 
             if angle > 170:
                 position = "up"
-            if angle < 100 and position == 'up':
+            if angle < 120 and position == 'up':
                 position = "down"
                 counter += 1
         except:
