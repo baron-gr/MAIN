@@ -91,8 +91,8 @@ class TrainAndLoggingCallback(BaseCallback):
             self.model.save(model_path)
         return True  
 
-CHECKPOINT_DIR = './python/script_outputs/car_train/'
-LOG_DIR = './python/script_outputs/car_logs/'
+CHECKPOINT_DIR = './script_outputs/car_train/'
+LOG_DIR = './script_outputs/car_logs/'
 
 callback = TrainAndLoggingCallback(check_freq = 1000, save_path = CHECKPOINT_DIR)
 
