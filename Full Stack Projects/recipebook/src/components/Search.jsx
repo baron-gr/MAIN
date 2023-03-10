@@ -47,7 +47,7 @@ const FormStyle = styled.form`
     svg {
         position: absolute;
         top: 50%;
-        left: 50%;
+        left: 0%;
         transform: translate(100%, -50%);
         color: white;
     }
