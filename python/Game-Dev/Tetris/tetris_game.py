@@ -29,11 +29,11 @@ field = [[0 for i in range(W)] for j in range(H)]
 
 anim_count, anim_speed, anim_limit = 0, 6, 2000
 
-bg = pygame.image.load('/Users/bgracias/MAIN/Python/Games/Tetris/space_bg.jpg').convert()
-game_bg = pygame.image.load('/Users/bgracias/MAIN/Python/Games/Tetris/stars_bg.jpg').convert()
+bg = pygame.image.load('/Users/bgracias/MAIN/Python/Game-Dev/Tetris/space_bg.jpg').convert()
+game_bg = pygame.image.load('/Users/bgracias/MAIN/Python/Game-Dev/Tetris/stars_bg.jpg').convert()
 
-main_font = pygame.font.Font('/Users/bgracias/MAIN/Python/Games/Tetris/Tetris.ttf', 70)
-font = pygame.font.Font('/Users/bgracias/MAIN/Python/Games/Tetris/Tetris.ttf', 55)
+main_font = pygame.font.Font('/Users/bgracias/MAIN/Python/Game-Dev/Tetris/Tetris.ttf', 70)
+font = pygame.font.Font('/Users/bgracias/MAIN/Python/Game-Dev/Tetris/Tetris.ttf', 55)
 
 title_tetris = main_font.render('TETRIS', True, pygame.Color('darkorange'))
 title_record = font.render('Record', True, pygame.Color('purple'))
@@ -66,15 +66,15 @@ def check_borders():
 
 def get_record():
     try:
-        with open('/Users/bgracias/MAIN/Python/Games/Tetris/record') as f:
+        with open('/Users/bgracias/MAIN/Python/Game-Dev/Tetris/record') as f:
             return f.readline()
     except FileNotFoundError:
-        with open('/Users/bgracias/MAIN/Python/Games/Tetris/record', 'w') as f:
+        with open('/Users/bgracias/MAIN/Python/Game-Dev/Tetris/record', 'w') as f:
             f.write('0')
 
 def set_record(record, score):
     rec = max(int(record), score)
-    with open('/Users/bgracias/MAIN/Python/Games/Tetris/record', 'w') as f:
+    with open('/Users/bgracias/MAIN/Python/Game-Dev/Tetris/record', 'w') as f:
         f.write(str(rec))
 
 while True:
@@ -140,9 +140,6 @@ while True:
             if not check_borders():
                 figure = deepcopy(figure_old)
                 break
-    
-    # save piece
-    
     
     # check lines
     line, lines = H - 1, 0

@@ -29,28 +29,28 @@ class WebGame(Env):
         reward = 1
         info = {}
         return new_observation, reward, done, info
-
+    
     def render(self):
         cv2.imshow('Game', self.current_frame)
         if cv2.waitKey(1) & 0xFF == ord('q'):
             self.close()
-
+            
     def reset(self):
         time.sleep(1)
         pyautogui.click(x = 375, y = 438)
         pyautogui.press('space')
         return self.get_observation()
-
+    
     def close(self):
         cv2.destroyAllWindows() 
-
+        
     def get_observation(self):
         raw = np.array(self.cap.grab(self.game_location))[:,:,:3].astype(np.uint8)
         gray = cv2.cvtColor(raw, cv2.COLOR_BGR2GRAY)
         resized = cv2.resize(gray, (100,83))
         channel = np.reshape(resized, (1,83,100))
         return channel
-
+    
     def get_done(self):
         done_cap = np.array(self.cap.grab(self.done_location))[:,:,:3].astype(np.uint8)
         done_strings = ['GAME', 'GAHE']
@@ -65,10 +65,10 @@ env = WebGame()
 # for episode in range(5): 
 #     obs = env.reset()
 #     done = False  
-#     total_reward = 0. 
+#     total_reward = 0
 #     while not done:  
-#         obs, reward,  done, info =  env.step(env.action_space.sample())
-#         total_reward  += reward
+#         obs, reward, done, info = env.step(env.action_space.sample())
+#         total_reward += reward
 #     print('Total Reward for episode {} is {}'.format(episode, total_reward))
  
 env_checker.check_env(env)
