@@ -72,8 +72,6 @@ def player_anim():
         player.bottom = screen_H
     if player.top < ball.y and player.bottom > ball.y:
         score += 1
-    if player.centery == ball.y:
-        score += 1
 
 def opponent_anim():
     if opponent.top < ball.y:
