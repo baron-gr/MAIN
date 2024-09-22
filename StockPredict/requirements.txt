@@ -29,6 +29,7 @@ numpy==2.1.1
 optuna==4.0.0
 packaging==24.1
 pandas==2.2.2
+pandas_ta==0.3.14b0
 peewee==3.17.6
 pillow==10.4.0
 platformdirs==4.3.6

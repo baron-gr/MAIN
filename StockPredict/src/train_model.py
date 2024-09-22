@@ -7,9 +7,10 @@ from sklearn.linear_model import Lasso
 from xgboost import XGBRegressor
 from lightgbm import LGBMRegressor
 from sklearn.ensemble import RandomForestRegressor
-from sklearn.model_selection import train_test_split
+from sklearn.model_selection import train_test_split, learning_curve
 from sklearn.pipeline import make_pipeline
 from sklearn.metrics import mean_absolute_error
+import numpy as np
 import pandas as pd
 import pickle
 from argparse import ArgumentParser
@@ -18,7 +19,9 @@ from argparse import ArgumentParser
 from src.preprocess import transform_features_targets
 from src.features_pipepline import preprocess_pipeline
 from src.hyperparams import best_hyperparams
+from src.plot_model import ModelPlotter
 
+from src.paths import RESULTS_DIR
 from src.paths import MODELS_DIR
 from src.logger import get_console_logger
 
@@ -30,16 +33,13 @@ def choose_model(model: str) -> Callable:
     """
     Returns model function given the model name
     """
-    if model == 'lasso':
-        return Lasso
-    elif model == 'light':
-        return LGBMRegressor
-    elif model == 'boost':
-        return XGBRegressor
-    elif model == 'forest':
-        return RandomForestRegressor
-    else:
-        return ValueError(f'Unknown model name: {model}')
+    model_dict = {
+        'lasso': Lasso,
+        'light': LGBMRegressor,
+        'boost': XGBRegressor,
+        'forest': RandomForestRegressor
+    }
+    return model_dict.get(model, ValueError(f'Unknown model name: {model}'))
 
 # function to train model
 def train(
@@ -58,6 +58,19 @@ def train(
     
     # split data into train and test
     X_train, X_test, y_train, y_test = train_test_split(X, y, train_size=0.9, random_state=42)
+    
+    train_sizes, train_scores, test_scores = learning_curve(
+        model_func(),
+        X_train,
+        y_train,
+        train_sizes=np.linspace(0.1, 1.0, 10),
+        cv=5,
+        scoring='neg_mean_absolute_error',
+        n_jobs=-1
+    )
+    
+    train_scores_mean = -train_scores.mean(axis=1)
+    test_scores_mean = -test_scores.mean(axis=1)
     
     if not tune_hyperparams:
         # create full pipeline with default hyperparams
@@ -94,6 +107,24 @@ def train(
     logger.info('Saving model to disk')
     with open(MODELS_DIR / f'{model}_{timestamp}.pkl', "wb") as f:
         pickle.dump(pipeline, f)
+    
+    # plot and save performance metrics for each model
+    plotter = ModelPlotter()
+    plots = [
+        (plotter.plot_residuals(y_test, predictions, model), 'res'),
+        (plotter.plot_actual_predicted(y_test, predictions, model), 'avp'),
+        (plotter.plot_learning_curve(train_sizes, train_scores_mean, test_scores_mean, model), 'lc')
+    ]
+    
+    # create file if file does not already exist
+    for plot, plot_name in plots:
+        file_name = f"{model}_tuned_{plot_name}_{timestamp}.png" if tune_hyperparams else f"{model}_{plot_name}_{timestamp}.png"
+        file_path = RESULTS_DIR / file_name
+        if file_path.exists():
+            logger.info(f'File {file_name} already exists')
+        else:
+            logger.info(f'Saving plots for {model}')
+            plotter.save_plot(plot, file_name)
     
 if __name__ == '__main__':
     # create arguments for CLI execution
