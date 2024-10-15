@@ -1,2 +1,6 @@
 stock_venv/
 config/
+results/
+models/
+environment_variables.sh
+deploy/

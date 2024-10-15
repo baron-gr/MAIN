@@ -1,5 +1,7 @@
 # imports
+import os
 import pandas as pd
+from comet_ml import Experiment
 from sklearn.metrics import mean_absolute_error
 from sklearn.model_selection import train_test_split
 
@@ -27,6 +29,13 @@ def train_model(
     Split data into train/test and return baseline model error
     """
     
+    experiment = Experiment(
+        api_key=os.environ["COMET_ML_API_KEY"],
+        workspace=os.environ["COMET_ML_WORKSPACE"],
+        project_name="stockpredict"
+    )
+    experiment.add_tag('baseline_model')
+    
     # split into train/test
     X_train, X_test, y_train, y_test = train_test_split(X, y, train_size=0.9, random_state=42)
     
@@ -37,6 +46,7 @@ def train_model(
     # baseline model performance
     baseline_mae = baseline_model_error(X_test, y_test)
     logger.info(f'Test MAE: {baseline_mae}')
+    experiment.log_metrics({'Test_MAE': baseline_mae})
 
 if __name__ == '__main__':
     # pull features and target from transformed data

@@ -5,6 +5,7 @@ from typing import Callable, Dict, Union, Tuple
 import numpy as np
 import pandas as pd
 import optuna
+from comet_ml import Experiment
 from sklearn.pipeline import make_pipeline
 from sklearn.linear_model import Lasso
 from lightgbm import LGBMRegressor
@@ -63,7 +64,8 @@ def best_hyperparams(
     model: Callable,
     hyperparam_trials: int,
     X: pd.DataFrame,
-    y: pd.Series
+    y: pd.Series,
+    experiment: Experiment
 ) -> Tuple[Dict, Dict]:
     """
     Find best hyperparams using optuna trial search
@@ -135,5 +137,7 @@ def best_hyperparams(
         logger.info(f'{key}: {value}')
     
     logger.info(f'Best MAE: {best_value}')
+    
+    experiment.log_metrics({'CV_MAE': best_value})
     
     return preprocess_hyperparams, model_hyperparams

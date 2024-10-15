@@ -3,6 +3,7 @@ import os
 from typing import Optional, Callable
 
 from datetime import datetime
+from comet_ml import Experiment
 from sklearn.linear_model import Lasso
 from xgboost import XGBRegressor
 from lightgbm import LGBMRegressor
@@ -53,6 +54,15 @@ def train(
     Train boosting tree model using input features X and target y
     """
     
+    experiment = Experiment(
+        api_key=os.environ["COMET_ML_API_KEY"],
+        workspace=os.environ["COMET_ML_WORKSPACE"],
+        project_name="stockpredict"
+    )
+    
+    tuned_model = f'{model}_tuned' if tune_hyperparams else f'{model}'
+    experiment.add_tag(tuned_model)
+    
     # pull desired model
     model_func = choose_model(model)
     
@@ -84,7 +94,7 @@ def train(
         # find best hyperparams using cross-validation
         logger.info('Finding best hyperparameters using cross-validation')
         
-        preprocess_hyperparams, model_hyperparams = best_hyperparams(model_func, hyperparam_trials, X_train, y_train)
+        preprocess_hyperparams, model_hyperparams = best_hyperparams(model_func, hyperparam_trials, X_train, y_train, experiment)
         logger.info(f'Best preprocessing hyperparameters: {preprocess_hyperparams}')
         logger.info(f'Best model hyperparameters: {model_hyperparams}')
         
@@ -92,6 +102,8 @@ def train(
             preprocess_pipeline(**preprocess_hyperparams),
             model_func(**model_hyperparams)
         )
+        
+        experiment.add_tag(tuned_model)
     
     # train model
     logger.info('Fitting model')
@@ -101,12 +113,17 @@ def train(
     predictions = pipeline.predict(X_test)
     mae_error = mean_absolute_error(y_test, predictions)
     logger.info(f'Test MAE: {mae_error}')
+    experiment.log_metrics({'Test_MAE': mae_error})
     
     # save model name and timestamp
     timestamp = datetime.today().strftime("%Y-%m-%d")
     logger.info('Saving model to disk')
-    with open(MODELS_DIR / f'{model}_{timestamp}.pkl', "wb") as f:
+    model_name = f"{model}_tuned_{timestamp}.pkl" if tune_hyperparams else f"{model}_{timestamp}.pkl"
+    with open(MODELS_DIR / model_name, "wb") as f:
         pickle.dump(pipeline, f)
+    
+    # log model artifact
+    experiment.log_model(model_name, str(MODELS_DIR / model_name))
     
     # plot and save performance metrics for each model
     plotter = ModelPlotter()
